@@ -1,0 +1,9 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  db:
+    image: postgres:13-buster
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: user
+    ports:
+    - 5432:5432
