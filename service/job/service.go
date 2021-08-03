@@ -78,7 +78,7 @@ func (j jobService) CreateJob(payload createJobRequest) (Job, error) {
 func (j jobService) UpdateJob(payload updateJobRequest) (Job, error) {
 	ctx := context.Background()
 	result, err := j.DB.UpdateJob(ctx, db.UpdateJobParams{
-		Uuid:      uuid.MustParse(payload.Id),
+		Uuid:      uuid.MustParse(payload.Uuid),
 		Name:      payload.Name,
 		Command:   payload.Command,
 		UpdatedAt: time.Now(),

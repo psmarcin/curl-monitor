@@ -14,22 +14,22 @@ func encodeResponse(_ context.Context, w http.ResponseWriter, response interface
 	return json.NewEncoder(w).Encode(response)
 }
 
-type listJobRequest struct{}
-type listJobResponse []listJobResponseJob
-type listJobResponseJob struct {
-	Uuid      string    `json:"id"`
+type ListJobRequest struct{}
+type ListJobResponse []ListJobResponseJob
+type ListJobResponseJob struct {
+	Uuid      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Command   string    `json:"command"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func makeListJobEndpoint(svc JobService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		jobs, _ := svc.ListJob()
-		var response listJobResponse
+		var response ListJobResponse
 		for _, job := range jobs {
-			response = append(response, listJobResponseJob{
+			response = append(response, ListJobResponseJob{
 				Uuid:      job.Uuid,
 				Name:      job.Name,
 				Command:   job.Command,
@@ -42,27 +42,27 @@ func makeListJobEndpoint(svc JobService) endpoint.Endpoint {
 }
 
 func decodeListJobRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	request := listJobRequest{}
+	request := ListJobRequest{}
 	return request, nil
 }
 
 type getJobRequest struct {
-	Id string `json:"id"`
+	Uuid string `json:"id"`
 }
 type getJobResponse struct {
-	Id        string    `json:"id"`
+	Uuid      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Command   string    `json:"command"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func makeGetJobEndpoint(svc JobService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(getJobRequest)
-		response, _ := svc.GetJob(req.Id)
+		response, _ := svc.GetJob(req.Uuid)
 		return getJobResponse{
-			Id:        response.Uuid,
+			Uuid:      response.Uuid,
 			Name:      response.Name,
 			Command:   response.Command,
 			CreatedAt: response.CreatedAt,
@@ -78,7 +78,7 @@ func decodeGetJobRequest(_ context.Context, r *http.Request) (interface{}, error
 		return nil, errors.New("id is not provided")
 	}
 
-	req := getJobRequest{Id: id}
+	req := getJobRequest{Uuid: id}
 	return req, nil
 }
 
@@ -87,11 +87,11 @@ type createJobRequest struct {
 	Command string `json:"command"`
 }
 type createJobResponse struct {
-	Id        string    `json:"id"`
+	Uuid      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Command   string    `json:"command"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func makeCreateJobEndpoint(svc JobService) endpoint.Endpoint {
@@ -99,7 +99,7 @@ func makeCreateJobEndpoint(svc JobService) endpoint.Endpoint {
 		req := request.(createJobRequest)
 		response, _ := svc.CreateJob(req)
 		return createJobResponse{
-			Id:        response.Uuid,
+			Uuid:      response.Uuid,
 			Name:      response.Name,
 			Command:   response.Command,
 			CreatedAt: response.CreatedAt,
@@ -117,16 +117,16 @@ func decodeCreateJobRequest(_ context.Context, r *http.Request) (interface{}, er
 }
 
 type updateJobRequest struct {
-	Id      string `json:"id"`
+	Uuid    string `json:"uuid"`
 	Name    string `json:"name"`
 	Command string `json:"command"`
 }
 type updateJobResponse struct {
-	Id        string    `json:"id"`
+	Uuid      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Command   string    `json:"command"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func makeUpdateJobEndpoint(svc JobService) endpoint.Endpoint {
@@ -134,7 +134,7 @@ func makeUpdateJobEndpoint(svc JobService) endpoint.Endpoint {
 		req := request.(updateJobRequest)
 		response, _ := svc.UpdateJob(req)
 		return updateJobResponse{
-			Id:        response.Uuid,
+			Uuid:      response.Uuid,
 			Name:      response.Name,
 			Command:   response.Command,
 			CreatedAt: response.CreatedAt,
@@ -150,7 +150,7 @@ func decodeUpdateJobRequest(_ context.Context, r *http.Request) (interface{}, er
 	if id == "" {
 		return nil, errors.New("id is not provided")
 	}
-	request.Id = id
+	request.Uuid = id
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return request, err
 	}
