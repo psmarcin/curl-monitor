@@ -11,3 +11,14 @@ packages:
     emit_empty_slices: false
     emit_json_tags: true
     json_tags_case_style: "camel"
+  - name: db
+    path: service/result/db
+    queries: service/result/db/query.sql
+    schema: service/result/db/schema.sql
+    engine: postgresql
+    emit_prepared_queries: true
+    emit_interface: false
+    emit_exact_table_names: false
+    emit_empty_slices: false
+    emit_json_tags: true
+    json_tags_case_style: "camel"
