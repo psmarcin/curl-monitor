@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"common/config"
 	"context"
 	"encoding/json"
 	"errors"
@@ -15,10 +16,17 @@ import (
 	"net/http"
 )
 
+type Cfg struct {
+	RabbitMQConnectionString string `env:"RABBITMQ_CONNECTION_STRING,required"`
+}
+
 func main() {
+	var cfg Cfg
+	err := config.Load(&cfg)
+
 	amqpURL := flag.String(
 		"url",
-		"amqp://localhost:5672",
+		cfg.RabbitMQConnectionString,
 		"URL to AMQP server",
 	)
 

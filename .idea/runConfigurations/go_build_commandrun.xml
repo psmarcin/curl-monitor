@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go build commandrun" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+    <module name="curl-monitor" />
+    <working_directory value="$PROJECT_DIR$/service/command-run" />
+    <envs>
+      <env name="RABBITMQ_CONNECTION_STRING" value="amqp://localhost:5672" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="commandrun" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/service/command-run/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

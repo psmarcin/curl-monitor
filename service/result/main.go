@@ -1,8 +1,8 @@
 package main
 
 import (
+	"common/config"
 	"database/sql"
-	"flag"
 	amqptransport "github.com/go-kit/kit/transport/amqp"
 	_ "github.com/lib/pq"
 	"github.com/streadway/amqp"
@@ -10,15 +10,17 @@ import (
 	"result/db"
 )
 
+type Cfg struct {
+	PostgresConnectionString string `env:"POSTGRES_CONNECTION_STRING,required"`
+	RabbitMQConnectionString string `env:"RABBITMQ_CONNECTION_STRING,required"`
+}
+
 func main() {
-	amqpURL := flag.String(
-		"url",
-		"amqp://localhost:5672",
-		"URL to AMQP server",
-	)
+	var cfg Cfg
+	err := config.Load(&cfg)
 
 	// connect to AMQP
-	conn, err := amqp.Dial(*amqpURL)
+	conn, err := amqp.Dial(cfg.RabbitMQConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,8 +32,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	urlExample := "postgres://user:pass@localhost:5432/job?sslmode=disable"
-	connection, err := sql.Open("postgres", urlExample)
+	connection, err := sql.Open("postgres", cfg.PostgresConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}

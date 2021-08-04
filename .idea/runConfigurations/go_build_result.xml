@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go build result" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+    <module name="curl-monitor" />
+    <working_directory value="$PROJECT_DIR$/service/result" />
+    <envs>
+      <env name="POSTGRES_CONNECTION_STRING" value="postgres://user:pass@localhost:5432/job?sslmode=disable" />
+      <env name="RABBITMQ_CONNECTION_STRING" value="amqp://localhost:5672" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="result" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/service/result/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

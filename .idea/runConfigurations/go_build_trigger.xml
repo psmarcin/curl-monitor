@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go build trigger" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+    <module name="curl-monitor" />
+    <working_directory value="$PROJECT_DIR$/service/trigger" />
+    <envs>
+      <env name="POSTGRES_CONNECTION_STRING" value="postgres://user:pass@localhost:5432/job?sslmode=disable" />
+      <env name="RABBITMQ_CONNECTION_STRING" value="amqp://localhost:5672" />
+      <env name="JOB_CONNECTION_STRING" value="http://localhost:8080" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="trigger" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/service/trigger/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

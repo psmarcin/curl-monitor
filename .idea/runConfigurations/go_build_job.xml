@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go build job" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+    <module name="curl-monitor" />
+    <working_directory value="$PROJECT_DIR$/service/job" />
+    <envs>
+      <env name="POSTGRES_CONNECTION_STRING" value="postgres://user:pass@localhost:5432/job?sslmode=disable" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="job" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/service/job/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

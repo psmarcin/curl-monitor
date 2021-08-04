@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"common/config"
 	_ "github.com/lib/pq"
 )
 
@@ -21,9 +22,15 @@ type Job struct {
 	UpdatedAt time.Time
 }
 
+type Cfg struct {
+	PostgresConnectionString string `env:"POSTGRES_CONNECTION_STRING,required"`
+}
+
 func main() {
-	urlExample := "postgres://user:pass@localhost:5432/job?sslmode=disable"
-	connection, err := sql.Open("postgres", urlExample)
+	var cfg Cfg
+	err := config.Load(&cfg)
+
+	connection, err := sql.Open("postgres", cfg.PostgresConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,5 +70,6 @@ func main() {
 	r.Methods(http.MethodPut).Path("/{id}").Handler(updateJobHandler)
 	r.Methods(http.MethodPost).Path("/").Handler(createJobHandler)
 	http.Handle("/", r)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

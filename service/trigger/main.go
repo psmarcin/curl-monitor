@@ -2,10 +2,10 @@ package main
 
 import (
 	"bytes"
+	"common/config"
 	"context"
 	"encoding/json"
 	"errors"
-	"flag"
 	"github.com/go-kit/kit/endpoint"
 	amqptransport "github.com/go-kit/kit/transport/amqp"
 	"github.com/streadway/amqp"
@@ -17,15 +17,17 @@ import (
 	"trigger/job"
 )
 
+type Cfg struct {
+	RabbitMQConnectionString string `env:"RABBITMQ_CONNECTION_STRING,required"`
+	JobConnectionString      string `env:"JOB_CONNECTION_STRING"`
+}
+
 func main() {
-	amqpURL := flag.String(
-		"url",
-		"amqp://localhost:5672",
-		"URL to AMQP server",
-	)
+	var cfg Cfg
+	err := config.Load(&cfg)
 
 	// connect to AMQP
-	conn, err := amqp.Dial(*amqpURL)
+	conn, err := amqp.Dial(cfg.RabbitMQConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,7 +39,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	baseUrl, _ := url.Parse("http://localhost:8080/")
+	baseUrl, _ := url.Parse(cfg.JobConnectionString)
 	jobClient := job.Job{URL: baseUrl}
 
 	service := triggerService{
