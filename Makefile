@@ -1,4 +1,4 @@
-dependencies: dependencies-command-run dependencies-job dependencies-result dependencies-trigger
+dependencies: dependencies-common dependencies-command-run dependencies-job dependencies-result dependencies-trigger
 
 dependencies-command-run:
 	cd service/command-run && go mod download
@@ -8,6 +8,8 @@ dependencies-result:
 	cd service/result && go mod download
 dependencies-trigger:
 	cd service/trigger && go mod download
+dependencies-common:
+	cd service/common && go mod download
 
 build: build-command-run build-job build-result build-trigger
 

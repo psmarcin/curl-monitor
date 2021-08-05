@@ -24,6 +24,7 @@ type Job struct {
 
 type Cfg struct {
 	PostgresConnectionString string `env:"POSTGRES_CONNECTION_STRING,required"`
+	PORT                     string `env:"PORT,required" envDefault:"8080"`
 }
 
 func main() {
@@ -70,6 +71,6 @@ func main() {
 	r.Methods(http.MethodPut).Path("/{id}").Handler(updateJobHandler)
 	r.Methods(http.MethodPost).Path("/").Handler(createJobHandler)
 	http.Handle("/", r)
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("Listening on port :%s", cfg.PORT)
+	log.Fatal(http.ListenAndServe(":"+cfg.PORT, nil))
 }
