@@ -1,6 +1,7 @@
 package main
 
 import (
+	"common"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"log"
@@ -8,9 +9,9 @@ import (
 	"time"
 )
 
-type TriggerService interface {
-	Handler(string) error
-}
+const (
+	command = "curl"
+)
 
 type triggerService struct {
 	Channel *amqp.Channel
@@ -26,8 +27,7 @@ type Output struct {
 }
 
 func (t triggerService) Handler(payload handlerInput) string {
-	log.Printf("command run received message: %s", payload)
-	output, err := exec.Command("curl", payload.Command).Output()
+	output, err := exec.Command(command, payload.Command).Output()
 	if err != nil {
 		result := Output{
 			JobUuid:   payload.Uuid,
@@ -40,9 +40,10 @@ func (t triggerService) Handler(payload handlerInput) string {
 		if err != nil {
 			log.Printf("error while marshaling: %s", err)
 		}
+		// TODO: handle error properly
 		t.Channel.Publish(
-			"CM.Job",
-			"output",
+			common.JobExchangeName,
+			common.ResultRoutingKey,
 			true,
 			false,
 			amqp.Publishing{Body: resultRaw},
@@ -61,8 +62,8 @@ func (t triggerService) Handler(payload handlerInput) string {
 		log.Printf("error while marshaling: %s", err)
 	}
 	t.Channel.Publish(
-		"CM.Job",
-		"output",
+		common.JobExchangeName,
+		common.ResultRoutingKey,
 		true,
 		false,
 		amqp.Publishing{Body: resultRaw},

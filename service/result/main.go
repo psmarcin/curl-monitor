@@ -44,7 +44,7 @@ func main() {
 		DB: queries,
 	}
 
-	queue, err := AMQPDeclaration(ch)
+	queue, err := SetupRabbitMQ(ch)
 	if err != nil {
 		log.Fatalf("err: %+v", err)
 	}
@@ -63,7 +63,7 @@ func main() {
 
 	handler := amqptransport.NewSubscriber(
 		ed,
-		decodeCreateResultRequest,
+		decorateHandler,
 		amqptransport.EncodeJSONResponse,
 	)
 

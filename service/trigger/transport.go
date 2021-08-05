@@ -5,15 +5,10 @@ import (
 	"encoding/json"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/streadway/amqp"
-	"time"
 )
 
 type handlerInput struct {
 	Name string `json:"name"`
-}
-
-type handlerOutput struct {
-	Timestamp time.Time `json:"timestamp"`
 }
 
 func makeHandlerEndpoint(service triggerService) endpoint.Endpoint {
@@ -29,6 +24,7 @@ func decodetriggerAMQPHandler(ctx context.Context, delivery *amqp.Delivery) (int
 	var request handlerInput
 	err := json.Unmarshal(delivery.Body, &request)
 	if err != nil {
+		// TODO: handle error
 		delivery.Reject(true)
 		return nil, err
 	}

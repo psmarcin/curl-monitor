@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/streadway/amqp"
-	"log"
-	"time"
 )
 
 type handlerInput struct {
@@ -15,13 +13,8 @@ type handlerInput struct {
 	Uuid    string `json:"uuid"`
 }
 
-type handlerOutput struct {
-	Timestamp time.Time `json:"timestamp"`
-}
-
 func makeHandlerEndpoint(service triggerService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		log.Printf("req: %+v", request)
 		req := request.(handlerInput)
 		res := service.Handler(req)
 
@@ -29,7 +22,7 @@ func makeHandlerEndpoint(service triggerService) endpoint.Endpoint {
 	}
 }
 
-func decodetriggerAMQPHandler(ctx context.Context, delivery *amqp.Delivery) (interface{}, error) {
+func decorateHandler(ctx context.Context, delivery *amqp.Delivery) (interface{}, error) {
 	var request handlerInput
 	err := json.Unmarshal(delivery.Body, &request)
 	if err != nil {

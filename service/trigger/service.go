@@ -1,6 +1,7 @@
 package main
 
 import (
+	"common"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"log"
@@ -26,9 +27,10 @@ func (t triggerService) Handler(payload handlerInput) string {
 
 	for _, job := range jobs {
 		payload, _ := json.Marshal(job)
+		// TODO: handle error properly
 		t.Channel.Publish(
-			"CM.Job",
-			"commandrun",
+			common.JobExchangeName,
+			common.CommandRunRoutingKey,
 			true,
 			false,
 			amqp.Publishing{
@@ -37,5 +39,6 @@ func (t triggerService) Handler(payload handlerInput) string {
 		)
 	}
 
+	// TODO: get rid of unnecessary return value
 	return "some string"
 }

@@ -1,12 +1,13 @@
 package main
 
 import (
+	"common"
 	"github.com/streadway/amqp"
 )
 
-func AMQPDeclaration(ch *amqp.Channel) (*amqp.Queue, error) {
+func SetupRabbitMQ(ch *amqp.Channel) (*amqp.Queue, error) {
 	_ = ch.ExchangeDeclare(
-		"CM.Job",
+		common.JobExchangeName,
 		amqp.ExchangeDirect,
 		true,
 		false,
@@ -15,7 +16,7 @@ func AMQPDeclaration(ch *amqp.Channel) (*amqp.Queue, error) {
 		nil,
 	)
 	outputQueue, err := ch.QueueDeclare(
-		"CM.Job.Output",
+		common.ResultQueueName,
 		true,  // durable
 		false, // autoDelete
 		false, // exclusive
@@ -26,7 +27,7 @@ func AMQPDeclaration(ch *amqp.Channel) (*amqp.Queue, error) {
 		return nil, err
 	}
 
-	_ = ch.QueueBind(outputQueue.Name, "output", "CM.Job", false, nil)
+	_ = ch.QueueBind(outputQueue.Name, common.ResultRoutingKey, common.JobExchangeName, false, nil)
 
 	return &outputQueue, nil
 }
