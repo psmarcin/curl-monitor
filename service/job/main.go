@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
+	"github.com/heptiolabs/healthcheck"
 	"job/db"
 	"log"
 	"net/http"
@@ -25,6 +26,7 @@ type Job struct {
 type Cfg struct {
 	PostgresConnectionString string `env:"POSTGRES_CONNECTION_STRING,required"`
 	PORT                     string `env:"PORT,required" envDefault:"8080"`
+	HealthCheckPORT          string `env:"HEALTHCHECK_PORT,required" envDefault:"8081"`
 }
 
 func main() {
@@ -36,6 +38,10 @@ func main() {
 		log.Fatal(err)
 	}
 	defer connection.Close()
+	err = connection.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	queries := db.New(connection)
 	svc := jobService{
@@ -65,12 +71,23 @@ func main() {
 		encodeResponse,
 	)
 
+	// health check
+	health := healthcheck.NewHandler()
+	health.AddReadinessCheck("postgres", healthcheck.DatabasePingCheck(connection, time.Second))
+	go func() {
+		log.Printf("Healthcheck listening on port :%s", cfg.HealthCheckPORT)
+		err := http.ListenAndServe("0.0.0.0:"+cfg.HealthCheckPORT, health)
+		if err != nil {
+			log.Fatalf("error on healtcheck %s", err)
+		}
+	}()
+
 	r := mux.NewRouter()
 	r.Methods(http.MethodGet).Path("/{id}").Handler(getJobHandler)
 	r.Methods(http.MethodGet).Path("/").Handler(listJobHandler)
 	r.Methods(http.MethodPut).Path("/{id}").Handler(updateJobHandler)
 	r.Methods(http.MethodPost).Path("/").Handler(createJobHandler)
 	http.Handle("/", r)
-	log.Printf("Listening on port :%s", cfg.PORT)
+	log.Printf("App listening on port :%s", cfg.PORT)
 	log.Fatal(http.ListenAndServe(":"+cfg.PORT, nil))
 }

@@ -3,8 +3,10 @@ package main
 import (
 	"common/config"
 	amqptransport "github.com/go-kit/kit/transport/amqp"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/streadway/amqp"
 	"log"
+	"net/http"
 	"net/url"
 	"trigger/job"
 )
@@ -12,6 +14,7 @@ import (
 type Cfg struct {
 	RabbitMQConnectionString string `env:"RABBITMQ_CONNECTION_STRING,required"`
 	JobConnectionString      string `env:"JOB_CONNECTION_STRING"`
+	HealthCheckPORT          string `env:"HEALTHCHECK_PORT,required" envDefault:"8081"`
 }
 
 func main() {
@@ -53,6 +56,16 @@ func main() {
 		false, // noWait
 		nil,   // args
 	)
+
+	// health check
+	health := healthcheck.NewHandler()
+	go func() {
+		log.Printf("Healthcheck listening on port :%s", cfg.HealthCheckPORT)
+		err := http.ListenAndServe("0.0.0.0:"+cfg.HealthCheckPORT, health)
+		if err != nil {
+			log.Fatalf("error on healtcheck %s", err)
+		}
+	}()
 
 	ed := makeHandlerEndpoint(service)
 

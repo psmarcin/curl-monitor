@@ -60,14 +60,14 @@ type getJobResponse struct {
 func makeGetJobEndpoint(svc JobService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(getJobRequest)
-		response, _ := svc.GetJob(req.Uuid)
+		response, err := svc.GetJob(req.Uuid)
 		return getJobResponse{
 			Uuid:      response.Uuid,
 			Name:      response.Name,
 			Command:   response.Command,
 			CreatedAt: response.CreatedAt,
 			UpdatedAt: response.UpdatedAt,
-		}, nil
+		}, err
 	}
 }
 

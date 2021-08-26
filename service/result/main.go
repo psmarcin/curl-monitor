@@ -4,15 +4,19 @@ import (
 	"common/config"
 	"database/sql"
 	amqptransport "github.com/go-kit/kit/transport/amqp"
+	"github.com/heptiolabs/healthcheck"
 	_ "github.com/lib/pq"
 	"github.com/streadway/amqp"
 	"log"
+	"net/http"
 	"result/db"
+	"time"
 )
 
 type Cfg struct {
 	PostgresConnectionString string `env:"POSTGRES_CONNECTION_STRING,required"`
 	RabbitMQConnectionString string `env:"RABBITMQ_CONNECTION_STRING,required"`
+	HealthCheckPORT          string `env:"HEALTHCHECK_PORT,required" envDefault:"8081"`
 }
 
 func main() {
@@ -58,6 +62,17 @@ func main() {
 		false, // noWait
 		nil,   // args
 	)
+
+	// health check
+	health := healthcheck.NewHandler()
+	health.AddReadinessCheck("postgres", healthcheck.DatabasePingCheck(connection, time.Second))
+	go func() {
+		log.Printf("Healthcheck listening on port :%s", cfg.HealthCheckPORT)
+		err := http.ListenAndServe("0.0.0.0:"+cfg.HealthCheckPORT, health)
+		if err != nil {
+			log.Fatalf("error on healtcheck %s", err)
+		}
+	}()
 
 	ed := makeCreateResultEndpoint(service)
 
