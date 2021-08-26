@@ -1,5 +1,6 @@
+
 ### Create new job
-POST http://localhost:8080/
+POST {{host}}/
 Content-Type: application/json
 
 {
@@ -8,18 +9,18 @@ Content-Type: application/json
 }
 
 ### List job
-GET http://localhost:8080/
+GET {{host}}/
 Content-Type: application/json
 
 ### Get job
-GET http://localhost:8080/299c3787-4f40-4218-9acd-ad98a40f7e63
+GET {{host}}/4daacde2-af16-4df6-a295-a7c483b9ce5c
 Content-Type: application/json
 
 ### Update job
-PUT http://localhost:8080/299c3787-4f40-4218-9acd-ad98a40f7e63
+PUT {{host}}/fa972dc9-0927-4263-9b11-f384ce217ce7
 Content-Type: application/json
 
 {
   "name": "test02",
-  "command": "curl"
+  "command": "https://example.com/"
 }
