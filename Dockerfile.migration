@@ -1,0 +1,9 @@
+FROM migrate/migrate:latest
+
+WORKDIR "/migrations"
+
+ADD migration .
+
+WORKDIR /go/src/github.com/golang-migrate/migrate
+ENTRYPOINT ["migrate"]
+CMD ["--help"]

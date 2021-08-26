@@ -1,0 +1,16 @@
+{{ if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrations
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrations
+          image: docker.io/library/curl-monitor-migration:1.2.4
+          command:
+            {{- toYaml .Values.migration.args | nindent 12 }}
+      restartPolicy: Never
+  backoffLimit: 4
+{{ end }}
