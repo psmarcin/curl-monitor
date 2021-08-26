@@ -31,7 +31,7 @@ RUN zip -q -r -0 /zoneinfo.zip .
 
 FROM alpine
 COPY --from=build-env /app/cmd /app
-RUN ls -la /app
+RUN apk --no-cache add curl
 
 ENV ZONEINFO /zoneinfo.zip
 COPY --from=alpine /zoneinfo.zip /
