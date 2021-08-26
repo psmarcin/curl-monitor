@@ -36,9 +36,9 @@ func (t triggerService) Handler(payload handlerInput) string {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		resultRaw, err := json.Marshal(result)
-		if err != nil {
-			log.Printf("error while marshaling: %s", err)
+		resultRaw, marshalErr := json.Marshal(result)
+		if marshalErr != nil {
+			log.Printf("error while marshaling: %s", marshalErr)
 		}
 		// TODO: handle error properly
 		t.Channel.Publish(
@@ -49,6 +49,7 @@ func (t triggerService) Handler(payload handlerInput) string {
 			amqp.Publishing{Body: resultRaw},
 		)
 		log.Printf("error while running command curl %s: %s - error: %s", payload.Command, output, err)
+		return ""
 	}
 	result := Output{
 		JobUuid:   payload.Uuid,
